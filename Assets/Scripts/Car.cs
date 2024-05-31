@@ -1,23 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    public float MovementSpeed {get; set;}
-    public float RotationSpeed {get; set;}
+    public float MovementSpeed;
+    public float RotationSpeed;
+    [SerializeField] private bool _isColliding;
+    private Rigidbody _rb;
 
     // Start is called before the first frame update
     void Start()
     {
-        MovementSpeed = 30f;
-        RotationSpeed = 15f;
+        MovementSpeed = 20f;
+        RotationSpeed = 10f;
+        _isColliding = false;
+        _rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
         ProcessInput();
+    }
+
+    void OnCollisionEnter(Collision other) {
+        if (!other.gameObject.CompareTag("Ground")) _isColliding = true;
+    }
+
+    void OnCollisionExit(Collision other) {
+        if (!other.gameObject.CompareTag("Ground")) {
+            _isColliding = false;
+            ResetForces();
+        }
     }
 
     private void ProcessInput() {
@@ -28,10 +41,15 @@ public class Car : MonoBehaviour
     }
 
     private void Move(Vector3 vector) {
-        transform.Translate(vector * Time.deltaTime * MovementSpeed);
+        transform.Translate(vector * Time.deltaTime * (_isColliding ? 1f : MovementSpeed));
     }
 
     private void Rotate(Vector3 vector) {
         transform.Rotate(vector * Time.deltaTime * RotationSpeed);
+    }
+
+    private void ResetForces() {
+        _rb.velocity = Vector3.zero;
+        _rb.angularVelocity = Vector3.zero;
     }
 }   
