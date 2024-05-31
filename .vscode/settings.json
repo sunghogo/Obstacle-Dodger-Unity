@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Obstacle Dodger.sln"
+    "dotnet.defaultSolution": "Obstacle-Dodger-Unity.sln"
 }
